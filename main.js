@@ -28,11 +28,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
+            const captchaResponse = grecaptcha.getResponse();
+            if (!captchaResponse) {
+                msg.innerText = "Please verify the CAPTCHA.";
+                return;
+            }
+
             try {
                 const res = await fetch('https://engineering-survey.onrender.com/submit', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ name, gpa, first_choice: firstChoice, major, program, gender })
+                    body: JSON.stringify({
+                        name, gpa, first_choice: firstChoice,
+                        major, program, gender,
+                        captcha: captchaResponse
+                    })
                 });
                 if (res.ok) {
                     msg.innerText = "Submitted! Thank you!";
