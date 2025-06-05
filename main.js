@@ -1,6 +1,5 @@
 // main.js
 
-// Handle survey form submission
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("surveyForm");
     if (form) {
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const gender = document.getElementById("gender").value;
             const msg = document.getElementById("msg");
 
-            // validation
             if (!name || name.length < 2 || name.length > 40) {
                 msg.innerText = "Please enter a valid name or alias.";
                 return;
@@ -37,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
             try {
                 const res = await fetch('https://engineering-survey.onrender.com/submit', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name, gpa, first_choice: firstChoice,
                         major, program, gender,
@@ -57,34 +55,34 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     }
 
-    // Data visualization (for data.html)
     if (window.location.pathname.endsWith('data.html')) {
-        // Fetch and render data every 20 seconds
         async function fetchDataAndRender() {
             try {
                 const res = await fetch('https://engineering-survey.onrender.com/data');
                 const data = await res.json();
 
-                // 1. Show cutoff
-                let cutoffText = "<h2>No data for cutoff yet.</h2>";
-                if (typeof data.cutoff === "number") {
-                    cutoffText = `<h2>The cutoff for computer engineering was <b>${data.cutoff.toFixed(2)}</b></h2>`;
-                }
-                document.getElementById('cutoff').innerHTML = cutoffText;
+                // Cutoff display
+                const cutoffEl = document.getElementById('cutoff');
+                cutoffEl.innerHTML = (typeof data.cutoff === "number") ?
+                    `<h2>The cutoff for computer engineering was <b>${data.cutoff.toFixed(2)}</b></h2>` :
+                    "<h2>No data for cutoff yet.</h2>";
 
-                // 2. Pie chart
+                // Destroy old charts safely
+                const destroyIfExists = (id) => {
+                    const chart = Chart.getChart(id);
+                    if (chart) chart.destroy();
+                };
+
+                destroyIfExists('pieChart');
+                destroyIfExists('gpaChart');
+                destroyIfExists('genderChart');
+
+                // Pie chart
                 const ctxPie = document.getElementById('pieChart').getContext('2d');
-                if (window.pieChart && typeof window.pieChart.destroy === "function") {
-                    window.pieChart.destroy();
-                }
-                window.pieChart = new Chart(ctxPie, {
+                new Chart(ctxPie, {
                     type: 'pie',
                     data: {
-                        labels: [
-                            "No Free Choice",
-                            "Free Choice (Above Cutoff)",
-                            "Free Choice (Below Cutoff)"
-                        ],
+                        labels: ["No Free Choice", "Free Choice (Above Cutoff)", "Free Choice (Below Cutoff)"],
                         datasets: [{
                             data: [
                                 data.pie.no_free_choice,
@@ -95,12 +93,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 });
 
-                // 3. GPA Histogram
+                // GPA Histogram
                 const ctxGpa = document.getElementById('gpaChart').getContext('2d');
-                if (window.gpaChart && typeof window.gpaChart.destroy === "function") {
-                    window.gpaChart.destroy();
-                }
-                window.gpaChart = new Chart(ctxGpa, {
+                new Chart(ctxGpa, {
                     type: 'bar',
                     data: {
                         labels: data.gpa_bins,
@@ -111,12 +106,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 });
 
-                // 4. Gender Pie
+                // Gender Pie
                 const ctxGender = document.getElementById('genderChart').getContext('2d');
-                if (window.genderChart && typeof window.genderChart.destroy === "function") {
-                    window.genderChart.destroy();
-                }
-                window.genderChart = new Chart(ctxGender, {
+                new Chart(ctxGender, {
                     type: 'pie',
                     data: {
                         labels: ['Male', 'Female', 'Other'],
