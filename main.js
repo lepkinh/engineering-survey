@@ -74,7 +74,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // 2. Pie chart
                 const ctxPie = document.getElementById('pieChart').getContext('2d');
-                if (window.pieChart) window.pieChart.destroy();
+                if (window.pieChart && typeof window.pieChart.destroy === "function") {
+                    window.pieChart.destroy();
+                }
                 window.pieChart = new Chart(ctxPie, {
                     type: 'pie',
                     data: {
@@ -95,7 +97,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // 3. GPA Histogram
                 const ctxGpa = document.getElementById('gpaChart').getContext('2d');
-                if (window.gpaChart) window.gpaChart.destroy();
+                if (window.gpaChart && typeof window.gpaChart.destroy === "function") {
+                    window.gpaChart.destroy();
+                }
                 window.gpaChart = new Chart(ctxGpa, {
                     type: 'bar',
                     data: {
@@ -109,7 +113,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // 4. Gender Pie
                 const ctxGender = document.getElementById('genderChart').getContext('2d');
-                if (window.genderChart) window.genderChart.destroy();
+                if (window.genderChart && typeof window.genderChart.destroy === "function") {
+                    window.genderChart.destroy();
+                }
                 window.genderChart = new Chart(ctxGender, {
                     type: 'pie',
                     data: {
@@ -122,7 +128,14 @@ document.addEventListener("DOMContentLoaded", function() {
                             ]
                         }]
                     },
-                    options: { plugins: { title: { display: true, text: 'Gender Breakdown (Computer Eng.)' } } }
+                    options: {
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Gender Breakdown (Computer Eng.)'
+                            }
+                        }
+                    }
                 });
 
             } catch (e) {
