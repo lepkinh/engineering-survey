@@ -2,7 +2,7 @@
 
 > 🛠 **Note to collaborators:**  
 > This project is live and deployed at [lepkinh.github.io/engineering-survey](https://lepkinh.github.io/engineering-survey). Please **push frontend changes to the `gh-pages` branch** and **backend changes to the `main` branch (Render auto-deploys from main)**.
-> Things to add: spam protection, admin panel, more data display, a license
+> Things to add: make the site prettier, UX changes, spam protection, admin panel, more data display, a license
 > dm @nicolaslepki if you have further questions
 
 ---
