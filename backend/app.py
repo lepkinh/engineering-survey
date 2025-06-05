@@ -30,6 +30,7 @@ init_db()
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    data = request.json
     captcha = data.get("captcha", "")
 
     # Verify with Google
@@ -40,7 +41,6 @@ def submit():
     if not r.json().get("success"):
         return "CAPTCHA failed", 400
 
-    data = request.json
     name = data.get('name', '').strip()
     try:
         gpa = float(data.get('gpa'))
