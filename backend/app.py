@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
+import requests
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -28,6 +30,16 @@ init_db()
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    captcha = data.get("captcha", "")
+
+    # Verify with Google
+    r = requests.post("https://www.google.com/recaptcha/api/siteverify", data={
+        'secret': os.getenv('RECAPTCHA_SECRET_KEY'),
+        'response': captcha
+    })
+    if not r.json().get("success"):
+        return "CAPTCHA failed", 400
+
     data = request.json
     name = data.get('name', '').strip()
     try:
