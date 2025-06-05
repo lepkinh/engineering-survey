@@ -1,4 +1,4 @@
-    // main.js
+// main.js
 
 // Handle survey form submission
 document.addEventListener("DOMContentLoaded", function() {
@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (res.ok) {
                     msg.innerText = "Submitted! Thank you!";
                     form.reset();
+                    grecaptcha.reset();
                 } else {
                     msg.innerText = "Failed to submit. Please try again.";
                 }
@@ -65,9 +66,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 const data = await res.json();
 
                 // 1. Show cutoff
-                document.getElementById('cutoff').innerHTML = data.cutoff ?
-                `<h2>The cutoff for computer engineering was <b>${data.cutoff.toFixed(2)}</b></h2>`
-                : "<h2>No data for cutoff yet.</h2>";
+                let cutoffText = "<h2>No data for cutoff yet.</h2>";
+                if (typeof data.cutoff === "number") {
+                    cutoffText = `<h2>The cutoff for computer engineering was <b>${data.cutoff.toFixed(2)}</b></h2>`;
+                }
+                document.getElementById('cutoff').innerHTML = cutoffText;
 
                 // 2. Pie chart
                 const ctxPie = document.getElementById('pieChart').getContext('2d');
@@ -124,8 +127,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
             } catch (e) {
                 document.getElementById('cutoff').innerHTML = "Error loading data.";
+                console.error("Failed to load data:", e);
             }
         }
+
         fetchDataAndRender();
         setInterval(fetchDataAndRender, 20000);
     }
